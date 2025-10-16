@@ -4,14 +4,14 @@ from rest_framework import serializers
 
 from apps.courses.models import Course, Instructor, Category
 
-"""User create"""
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [ 'username', 'email', 'first_name', 'last_name']
         read_only_fields = ['id']
 
-"""Instructor create qilib course ga bog'lash"""
+
 class InstructorSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
     class Meta:
@@ -64,3 +64,6 @@ class CourseModelSerializer(serializers.ModelSerializer):
 
         validated_data['slug'] = slug
         return super().create(validated_data)
+
+
+
