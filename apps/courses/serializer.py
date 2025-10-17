@@ -21,9 +21,9 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         fields = [
-            'user','bio','profile_image','expertise','total_students','rating','is_verified','created_at'
+            'id','user','bio','profile_image','expertise','total_students','rating','is_verified','created_at'
         ]
-        read_only_fields = [ 'created_at','id']
+        read_only_fields = ['id','created_at','id']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -146,8 +146,8 @@ class CourseListSerializer(serializers.ModelSerializer):
     category = CategoryNestedSerializer(read_only=True)
     instructor = InstructorNestedSerializer(read_only=True)
     final_price = serializers.SerializerMethodField(read_only=True)
-    total_lessons = serializers.SerializerMethodField(read_only=True)
-    total_duration = serializers.SerializerMethodField(read_only=True)
+    # total_lessons = serializers.SerializerMethodField(read_only=True)
+    # total_duration = serializers.SerializerMethodField(read_only=True)
     # students_count = serializers.SerializerMethodField(read_only=True)
     # average_rating = serializers.SerializerMethodField(read_only=True)
     # reviews_count = serializers.SerializerMethodField(read_only=True)
@@ -163,16 +163,16 @@ class CourseListSerializer(serializers.ModelSerializer):
     def get_final_price(value):
         return value.price * (Decimal(1) - Decimal(value.discount_percentage) / Decimal(100))
 
-    def get_total_lessons(self,value):
-        pass
-
-    def get_total_duration(self,value):
-        pass
-
+    # def get_total_lessons(self,value):
+    #     pass
+    #
+    # def get_total_duration(self,value):
+    #     pass
+    #
     # @staticmethod
     # def get_students_count(value):
     #     return value.enrollments.count()
-
+    #
     # @staticmethod
     # def get_average_rating(value):
     #     return value.reviews.aggregate(avg=Avg('rating'))
@@ -180,7 +180,7 @@ class CourseListSerializer(serializers.ModelSerializer):
     # @staticmethod
     # def get_reviews_count(value):
     #     return value.reviews.count()
-    #
+
 
     def create(self, validated_data):
         title = validated_data.get('title')
@@ -194,3 +194,24 @@ class CourseListSerializer(serializers.ModelSerializer):
 
         validated_data['slug'] = slug
         return super().create(validated_data)
+
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Course
+        fields = '__all__'
+        read_only_fields = ['slug', 'created_at']
+
+
+    def update(self, instance, validated_data):
+        title = validated_data.get('title', instance.title)
+        if title != instance.title:
+            slug = slugify(title)
+            counter = 1
+            while Course.objects.filter(slug=slug).exists():
+                slug = f"{slugify(title)}-{counter}"
+                counter += 1
+            validated_data['slug'] = slug
+        return super().update(instance, validated_data)
