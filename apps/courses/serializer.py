@@ -217,3 +217,23 @@ class CourseDetailSerializer(serializers.ModelSerializer):
                 counter += 1
             validated_data['slug'] = slug
         return super().update(instance, validated_data)
+
+
+class CourseDetailPutPatchDelete(serializers.ModelSerializer):
+
+    class Meta:
+        model = Course
+        fields = '__all__'
+        read_only_fields = ['slug', 'created_at','category_id','teach']
+
+
+    def update(self, instance, validated_data):
+        title = validated_data.get('title', instance.title)
+        if title != instance.title:
+            slug = slugify(title)
+            counter = 1
+            while Course.objects.filter(slug=slug).exists():
+                slug = f"{slugify(title)}-{counter}"
+                counter += 1
+            validated_data['slug'] = slug
+        return super().update(instance, validated_data)

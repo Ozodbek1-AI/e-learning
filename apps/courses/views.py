@@ -8,7 +8,7 @@ from drf_yasg import openapi
 
 from apps.courses.models import Course, Category, Instructor, Lesson
 from apps.courses.serializer import CourseModelSerializer, CategoryModelSerializer, InstructorSerializer, \
-    CourseListSerializer, CourseDetailSerializer
+    CourseListSerializer, CourseDetailSerializer, CourseDetailPutPatchDelete
 
 
 class InstructorCreateAPIView(CreateAPIView):
@@ -99,12 +99,12 @@ class CourseDetailAPIView(APIView):
 
 
 class CourseDetailPutPatchDeleteAPIView(APIView):
-    serializer_class = CourseDetailSerializer
+    serializer_class = CourseDetailPutPatchDelete
     model = Course
 
     @swagger_auto_schema(
-        request_body=CourseDetailSerializer,
-        responses={200: CourseDetailSerializer}
+        request_body=CourseDetailPutPatchDelete,
+        responses={200: CourseDetailPutPatchDelete}
     )
     def put(self,request,pk):
         try:
@@ -112,7 +112,7 @@ class CourseDetailPutPatchDeleteAPIView(APIView):
         except Course.DoesNotExist:
             return Response({"errors":"Course not found"},status=404)
 
-        serializer = CourseDetailSerializer(instance=course, data=request.data)
+        serializer = CourseDetailPutPatchDelete(instance=course, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -127,8 +127,8 @@ class CourseDetailPutPatchDeleteAPIView(APIView):
             )
 
     @swagger_auto_schema(
-        request_body=CourseDetailSerializer,
-        responses={200: CourseDetailSerializer}
+        request_body=CourseDetailPutPatchDelete,
+        responses={200: CourseDetailPutPatchDelete}
     )
     def patch(self,request,pk):
         try:
@@ -136,7 +136,7 @@ class CourseDetailPutPatchDeleteAPIView(APIView):
         except Course.DoesNotExist:
             return Response({'error':'Product not found'},status=404)
 
-        serializer = CourseDetailSerializer(instance=course, data=request.data, partial=True)
+        serializer = CourseDetailPutPatchDelete(instance=course, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
