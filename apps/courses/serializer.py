@@ -198,6 +198,8 @@ class CourseListSerializer(serializers.ModelSerializer):
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
+    category_id = CategoryModelSerializer(source='category', read_only=True)
+    teach = InstructorSerializer(source='instructor', read_only=True)
 
     class Meta:
         model = Course
