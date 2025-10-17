@@ -51,7 +51,6 @@ class CourseListAPIView(APIView):
         search = request.query_params.get('search')
         ordering = request.query_params.get('ordering')
 
-        # 🧩 Filterlar
         if category:
             courses = courses.filter(category__id=category)
 
